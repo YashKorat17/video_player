@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/feedbackNav"
+        android:title="@string/feedback"
+    />
+    <item
+        android:id="@+id/themeNav"
+        android:title="@string/theme"
+    />
+    <item
+    android:id="@+id/aboutNav"
+    android:title="@string/about"
+    />
+    <item
+    android:id="@+id/exitNav"
+    android:title="@string/exit"
+    />
+</menu>
