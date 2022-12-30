@@ -2,6 +2,7 @@
     <string name="app_name">Video player</string>
 
     <string name="nav_text">Welcome To the world of entertianment</string>
+    <string name="version">Version 1.0</string>
 
     <string name="all_videos">All Videos</string>
     <string name="all_folders">All Folders</string>
@@ -15,4 +16,9 @@
     <string name="feedback">feedback</string>
     <string name="about">About</string>
     <string name="exit">Exit</string>
+<!--Video String -->
+    <string name="video_name">Video Name</string>
+    <string name="folder_name">Folder Name</string>
+    <string name="duration">00:00</string>
+    <string name="image">Image</string>
 </resources>

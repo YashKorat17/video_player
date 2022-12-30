@@ -1,8 +1,6 @@
 package com.ams.videoplayer
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.ActionBar
-import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,10 +10,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.ams.videoplayer.databinding.ActivityMainBinding
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding : ActivityMainBinding
+    private lateinit var binding : ActivityMainBinding
     lateinit var toggle : ActionBarDrawerToggle
 
 
@@ -40,6 +39,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.folderview -> setFragement(FolderFragment())
             }
             return@setOnItemSelectedListener true
+        }
+
+        binding.navView.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.feedbackNav -> Toast.makeText(this,"Feedback",Toast.LENGTH_SHORT).show()
+                R.id.themeNav -> Toast.makeText(this,"Theme",Toast.LENGTH_SHORT).show()
+                R.id.aboutNav -> Toast.makeText(this,"About",Toast.LENGTH_SHORT).show()
+                R.id.exitNav -> exitProcess(1)
+            }
+            return@setNavigationItemSelectedListener true
         }
     }
     private fun setFragement(fragment:Fragment){
