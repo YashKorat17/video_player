@@ -1,15 +1,19 @@
 package com.ams.videoplayer
 
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.ams.videoplayer.databinding.ActivityMainBinding
+import java.io.File
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +21,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     lateinit var toggle : ActionBarDrawerToggle
 
+    companion object{
+        lateinit var videoList:ArrayList<Video>
+        lateinit var folderList:ArrayList<Folder>
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,15 +32,25 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_CoolPurpleNav)
         setContentView(binding.root)
-//  Get PerMission
-        requestRuntimePermission()
+
 //        for Nav Drawer
         toggle = ActionBarDrawerToggle(this,binding.root,R.string.open,R.string.close)
         binding.root.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-//set Video Fragment
-        setFragement(videosFragment())
+        //  Get PerMission
+        if (requestRuntimePermission()){
+//        GET ALL FOLDERS
+            folderList = ArrayList()
+//        GET ALL VIDEOS
+            videoList = getAllVideos()
+//        set Video Fragment
+            setFragement(videosFragment())
+
+        }
+
+
+
         binding.bottomNav.setOnItemSelectedListener{
             when(it.itemId){
                 R.id.videoview -> setFragement(videosFragment())
@@ -87,6 +105,50 @@ class MainActivity : AppCompatActivity() {
         if(toggle.onOptionsItemSelected(item))
             return true
         return super.onOptionsItemSelected(item)
+    }
+
+//    return all videos
+
+    @SuppressLint("Recycle", "Range", "SuspiciousIndentation")
+    private fun getAllVideos():ArrayList<Video>{
+        val tempList = ArrayList<Video>()
+        val tempFolderList = ArrayList<String>()
+        val projection = arrayOf(MediaStore.Video.Media.TITLE,MediaStore.Video.Media.SIZE
+        ,MediaStore.Video.Media._ID,MediaStore.Video.Media.BUCKET_DISPLAY_NAME,MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.DATE_ADDED,MediaStore.Video.Media.DURATION,MediaStore.Video.Media.BUCKET_ID)
+
+        val cursor = this.contentResolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,projection,null,null,MediaStore.Video.Media.DATE_ADDED+" DESC")
+        if (cursor != null)
+            if (cursor.moveToNext())
+                do {
+                    val titleC = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.TITLE))
+                    val idC = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media._ID))
+                    val foldernameC = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.BUCKET_DISPLAY_NAME))
+                    val folderId = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.BUCKET_ID))
+                    val sizeC = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.SIZE))
+                    val pathC = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA))
+                    val durationC = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION)).toLong()
+
+                    try {
+                        val file  = File(pathC)
+                        val artUri = Uri.fromFile(file)
+
+                        val video = Video(idC,titleC,durationC,foldernameC,sizeC,pathC,artUri)
+
+                        if (file.exists()) tempList.add(video)
+
+//                        for adding folder
+                        if(!tempFolderList.contains(foldernameC)){
+                            tempFolderList.add(foldernameC)
+                            folderList.add(Folder(foldername = foldernameC,id=folderId))
+                        }
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                    }
+
+                }while (cursor.moveToNext())
+                cursor?.close()
+        return tempList
     }
 }
 

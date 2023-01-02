@@ -24,7 +24,7 @@ class videosFragment : Fragment() {
         binding.videoRV.setHasFixedSize(true)
         binding.videoRV.setItemViewCacheSize(10)
         binding.videoRV.layoutManager = LinearLayoutManager(requireContext())
-        binding.videoRV.adapter = VideoAdapter(requireContext(),templist)
+        binding.videoRV.adapter = VideoAdapter(requireContext(),MainActivity.videoList)
         return view
     }
 
