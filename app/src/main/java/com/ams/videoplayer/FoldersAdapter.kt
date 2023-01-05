@@ -1,8 +1,10 @@
 package com.ams.videoplayer
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.ams.videoplayer.databinding.FoldersViewBinding
 
@@ -10,6 +12,7 @@ class FoldersAdapter(private val context: Context, private var folderList: Array
     RecyclerView.Adapter<FoldersAdapter.MyHolder>() {
     class MyHolder(binding: FoldersViewBinding): RecyclerView.ViewHolder(binding.root){
         val folderName = binding.folderNameFV
+        val root = binding.root
 
 
 
@@ -20,6 +23,12 @@ class FoldersAdapter(private val context: Context, private var folderList: Array
     }
     override fun onBindViewHolder(holder: MyHolder, position: Int) {
         holder.folderName.text = folderList[position].foldername
+        holder.root.setOnClickListener {
+            val intent = Intent(context,FoldersActivity::class.java)
+            intent.putExtra("position",position)
+//            context.startActivity(intent)
+            ContextCompat.startActivity(context,intent,null)
+        }
     }
     override fun getItemCount(): Int {
         return folderList.size

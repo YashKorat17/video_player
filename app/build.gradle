@@ -47,4 +47,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 //for Glide
     implementation 'com.github.bumptech.glide:glide:4.14.2'
+
+//    For EXO PLYER
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.2'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.2'
 }

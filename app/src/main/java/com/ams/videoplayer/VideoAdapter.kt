@@ -1,20 +1,23 @@
 package com.ams.videoplayer
 
 import android.content.Context
+import android.content.Intent
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.ams.videoplayer.databinding.VideoViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
-class VideoAdapter(private val context:Context, private var videoList: ArrayList<Video>):RecyclerView.Adapter<VideoAdapter.MyHolder>() {
+class VideoAdapter(private val context:Context, private var videoList: ArrayList<Video>,private val isFolder:Boolean = false):RecyclerView.Adapter<VideoAdapter.MyHolder>() {
     class MyHolder(binding:VideoViewBinding):RecyclerView.ViewHolder(binding.root){
     val title  = binding.videoName
     val folder = binding.folderName
     val duration = binding.duration
         val image = binding.videoIma
+        val root = binding.root
 
 
 
@@ -32,9 +35,26 @@ class VideoAdapter(private val context:Context, private var videoList: ArrayList
             .load(videoList[position].artUri)
             .apply(RequestOptions().placeholder(R.mipmap.ams_video_player).centerCrop())
             .into(holder.image)
+        holder.root.setOnClickListener{
+                when {
+                    isFolder ->{
+                        sendIntent(pos = position, ref = "FolderActivity")
+                    }
+                    else->{
+                        sendIntent(pos = position,ref = "AllVideos")
+                    }
+                }
+        }
     }
     override fun getItemCount(): Int {
         return videoList.size
+    }
+
+    private fun sendIntent(pos:Int,ref:String){
+        PlayerActivity.position  = pos
+        val intent = Intent(context,PlayerActivity::class.java)
+        intent.putExtra("class",ref)
+        ContextCompat.startActivity(context,intent,null)
     }
 
 }
