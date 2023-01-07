@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.ams.videoplayer.databinding.ActivityMainBinding
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
     lateinit var toggle : ActionBarDrawerToggle
+    lateinit var  toolbar: Toolbar
 
     companion object{
         lateinit var videoList:ArrayList<Video>
@@ -30,8 +32,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setTheme(R.style.Theme_CoolPurpleNav)
         setContentView(binding.root)
+
+        toolbar = binding.toolbar
+        setSupportActionBar(toolbar)  //for toolbar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
+
 
 //        for Nav Drawer
         toggle = ActionBarDrawerToggle(this,binding.root,R.string.open,R.string.close)
