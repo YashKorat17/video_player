@@ -33,4 +33,5 @@
     <string name="previos_btn">previos_btn</string>
     <string name="fullscreen_btn">fullscreen_btn</string>
     <string name="play_btn">play_btn</string>
+    <string name="video_player_title">Ams Video Player</string>
 </resources>

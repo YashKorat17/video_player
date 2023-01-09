@@ -3,24 +3,32 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.view.WindowManager
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.ams.videoplayer.databinding.ActivityPlayerBinding
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityPlayerBinding
+    private lateinit var runnable : Runnable
 
     companion object{
         private lateinit var player : ExoPlayer
         lateinit var playerlist:ArrayList<Video>
         var position :Int = -1
         var repeat : Boolean = false
+        private var isFullScreen : Boolean = false
+        private var isLocked:Boolean = false
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +56,7 @@ class PlayerActivity : AppCompatActivity() {
         initalizeBinding()
         }
 
+    @SuppressLint("PrivateResource")
     private fun initializeLayout(){
         when(intent.getStringExtra("class")) {
             "AllVideos"->{
@@ -62,6 +71,8 @@ class PlayerActivity : AppCompatActivity() {
                 createplayer()
             }
         }
+        if (repeat) binding.repeatBtn.setImageResource(com.google.android.exoplayer2.ui.R.drawable.exo_controls_repeat_all)
+        else binding.repeatBtn.setImageResource(com.google.android.exoplayer2.ui.R.drawable.exo_controls_repeat_off)
     }
 
     @SuppressLint("PrivateResource")
@@ -94,6 +105,31 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
+        binding.fullScreenBtn.setOnClickListener {
+            if (isFullScreen){
+                isFullScreen = false
+                playInFullScreen(enable = false)
+            }else{
+                isFullScreen = true
+                playInFullScreen(enable = true)
+            }
+        }
+
+        binding.lockbtn.setOnClickListener {
+            if (!isLocked){
+//                for hiding
+                isLocked = true
+                binding.playerView.hideController()
+                binding.playerView.useController = false
+                binding.lockbtn.setImageResource(R.drawable.close_lock_icon)
+            }else{
+                isLocked = false
+                binding.playerView.useController = true
+                binding.playerView.showController()
+                binding.lockbtn.setImageResource(R.drawable.lock_open_icon)
+
+            }
+        }
     }
 
     private fun createplayer(){
@@ -116,6 +152,9 @@ class PlayerActivity : AppCompatActivity() {
                 if (playbackState == Player.STATE_ENDED) nextPlayVideo()
             }
         })
+
+        playInFullScreen(enable = isFullScreen)
+        setVisibility()
     }
 
     private fun playVideo(){
@@ -149,6 +188,35 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun playInFullScreen(enable:Boolean){
+        if (enable){
+            binding.playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+            player.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+            binding.fullScreenBtn.setImageResource(R.drawable.fullscreen_exit)
+        }else{
+            binding.playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            player.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
+            binding.fullScreenBtn.setImageResource(R.drawable.fullscreen_icon)
+        }
+    }
+
+    private fun setVisibility(){
+        runnable  = Runnable {
+            if (binding.playerView.isControllerVisible) changeVisibility(View.VISIBLE)
+            else changeVisibility(View.INVISIBLE)
+            Handler(Looper.getMainLooper()).postDelayed(runnable,300)
+        }
+        Handler(Looper.getMainLooper()).postDelayed(runnable,0)
+    }
+
+    private fun changeVisibility(visibility:Int){
+        binding.topController.visibility = visibility
+        binding.bottomController.visibility = visibility
+        binding.playPauseBtn.visibility = visibility
+
+        if (isLocked) binding.lockbtn.visibility = View.VISIBLE
+        else binding.lockbtn.visibility = visibility
+    }
 
     override fun onDestroy() {
         super.onDestroy()

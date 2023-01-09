@@ -20,12 +20,14 @@ import kotlin.system.exitProcess
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
-    lateinit var toggle : ActionBarDrawerToggle
-    lateinit var  toolbar: Toolbar
+    private lateinit var toggle : ActionBarDrawerToggle
+    private lateinit var  toolbar: Toolbar
 
     companion object{
+
         lateinit var videoList:ArrayList<Video>
         lateinit var folderList:ArrayList<Folder>
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         binding.root.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
         //  Get PerMission
         if (requestRuntimePermission()){
 //        GET ALL FOLDERS
@@ -56,8 +60,6 @@ class MainActivity : AppCompatActivity() {
             setFragement(videosFragment())
 
         }
-
-
 
         binding.bottomNav.setOnItemSelectedListener{
             when(it.itemId){
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
-    ) {
+        ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 13){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED){

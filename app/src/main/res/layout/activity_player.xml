@@ -62,6 +62,7 @@
     </LinearLayout>
 
     <ImageButton
+        android:id="@+id/lockbtn"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:backgroundTint="@android:color/transparent"
@@ -123,6 +124,7 @@
             />
 
         <ImageButton
+            android:id="@+id/fullScreenBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/fullscreen_icon"
